@@ -1,0 +1,16 @@
+﻿@model List<ResultCategoryDTO>
+
+<div class="col-lg-3">
+    <div class="hero__categories">
+        <div class="hero__categories__all">
+            <i class="fa fa-bars"></i>
+            <span>Popüler Kategoriler</span>
+        </div>
+        <ul>
+            @foreach(var item in Model.Take(11))
+            {
+                <li><a href="#">@item.CategoryName</a></li>
+            }
+        </ul>
+    </div>
+</div>

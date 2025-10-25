@@ -1,0 +1,53 @@
+﻿@model CreateProductDTO
+
+@{
+    ViewData["Title"] = "CreateProduct";
+    Layout = "~/Views/_AdminLayout.cshtml";
+}
+
+<h5 class="mb-0 text-center">Ürünler</h5>
+<hr />
+<div class="row">
+    <div class="col-xl-6 mx-auto">
+        <div class="card">
+            <div class="card-body">
+                <div class="border p-3 rounded">
+                    <h6 class="mb-0 text-center">Yeni Müşteri Ekle</h6>
+                    <hr />
+                    <form method="post" class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label">Ürün Adı</label>
+                            <input type="text" class="form-control" asp-for="ProductName">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Fiyat</label>
+                            <input type="text" class="form-control" asp-for="UnitPrice">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Stok Sayısı</label>
+                            <input type="number" class="form-control" asp-for="Stock">
+                        </div>                        
+                        <div class="col-12">
+                            <label class="form-label">Kategori</label>
+                            <select class="form-select" asp-for="CategoryId" asp-items="@(new SelectList(ViewBag.Categories, "CategoryId", "CategoryName"))">
+                                <option value="">-- Kategori Seçin --</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Resim Url</label>
+                            <input type="text" class="form-control" asp-for="ImageUrl">
+                        </div>                        
+                        <div class="d-flex justify-content-between">
+                            <a href="/Product/Index" class="btn btn-secondary px-5 radius-30 btn-sm">
+                                <i class="bi bi-arrow-left"></i> Geri
+                            </a>
+                            <button type="submit" class="btn btn-success px-5 radius-30 btn-sm">
+                                <i class="bi bi-plus-circle"></i> Ekle
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

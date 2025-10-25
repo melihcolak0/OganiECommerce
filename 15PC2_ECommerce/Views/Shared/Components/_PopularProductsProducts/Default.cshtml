@@ -1,0 +1,100 @@
+﻿@model List<ResultProductDTO>
+
+<div class="sidebar__item">
+    <div class="latest-product__text">
+        <h4>Popüler Ürünler</h4>
+        <div class="latest-product__slider owl-carousel">
+            @{
+                // 6 ürünü 3'erli iki gruba ayırıyoruz
+                var chunks = Model.Select((p, i) => new { p, i })
+                .GroupBy(x => x.i / 3)
+                .Select(g => g.Select(x => x.p).ToList())
+                .ToList();
+            }
+
+            @foreach (var group in chunks)
+            {
+                <div class="latest-prdouct__slider__item">
+                    @foreach (var item in group)
+                    {
+                        <a href="#" class="latest-product__item">
+                            <div class="latest-product__item__pic">
+                                <img src="@item.ImageUrl" alt="@item.ProductName" style="width:70px;height:70px;object-fit:cover;">
+                            </div>
+                            <div class="latest-product__item__text">
+                                <h6>@item.ProductName</h6>
+                                <span>@item.UnitPrice.ToString("F2") ₺</span>
+                            </div>
+                        </a>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@* <div class="sidebar__item">
+    <div class="latest-product__text">
+        <h4>Latest Products</h4>
+        <div class="latest-product__slider owl-carousel">
+            <div class="latest-prdouct__slider__item">
+                <a href="#" class="latest-product__item">
+                    <div class="latest-product__item__pic">
+                        <img src="img/latest-product/lp-1.jpg" alt="">
+                    </div>
+                    <div class="latest-product__item__text">
+                        <h6>Crab Pool Security</h6>
+                        <span>$30.00</span>
+                    </div>
+                </a>
+                <a href="#" class="latest-product__item">
+                    <div class="latest-product__item__pic">
+                        <img src="img/latest-product/lp-2.jpg" alt="">
+                    </div>
+                    <div class="latest-product__item__text">
+                        <h6>Crab Pool Security</h6>
+                        <span>$30.00</span>
+                    </div>
+                </a>
+                <a href="#" class="latest-product__item">
+                    <div class="latest-product__item__pic">
+                        <img src="img/latest-product/lp-3.jpg" alt="">
+                    </div>
+                    <div class="latest-product__item__text">
+                        <h6>Crab Pool Security</h6>
+                        <span>$30.00</span>
+                    </div>
+                </a>
+            </div>
+            <div class="latest-prdouct__slider__item">
+                <a href="#" class="latest-product__item">
+                    <div class="latest-product__item__pic">
+                        <img src="img/latest-product/lp-1.jpg" alt="">
+                    </div>
+                    <div class="latest-product__item__text">
+                        <h6>Crab Pool Security</h6>
+                        <span>$30.00</span>
+                    </div>
+                </a>
+                <a href="#" class="latest-product__item">
+                    <div class="latest-product__item__pic">
+                        <img src="img/latest-product/lp-2.jpg" alt="">
+                    </div>
+                    <div class="latest-product__item__text">
+                        <h6>Crab Pool Security</h6>
+                        <span>$30.00</span>
+                    </div>
+                </a>
+                <a href="#" class="latest-product__item">
+                    <div class="latest-product__item__pic">
+                        <img src="img/latest-product/lp-3.jpg" alt="">
+                    </div>
+                    <div class="latest-product__item__text">
+                        <h6>Crab Pool Security</h6>
+                        <span>$30.00</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</div> *@

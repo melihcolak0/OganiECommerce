@@ -1,0 +1,424 @@
+﻿@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/_AdminLayout.cshtml";
+    int count = 0;
+}
+
+<div class="row row-cols-1 row-cols-lg-2 row-cols-xl-4">
+    <div class="col">
+        <div class="card rounded-4">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="">
+                        <p class="mb-1">Toplam Gelir</p>
+                        <h4 class="mb-0">@ViewBag.TotalRevenue.ToString("C")</h4>
+                    </div>
+                    <div class="ms-auto widget-icon bg-primary text-white">
+                        <i class="bi bi-cash-stack"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col">
+        <div class="card rounded-4">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="">
+                        <p class="mb-1">En Çok Satan Ürün</p>
+                        <h4 class="mb-0">@ViewBag.TopProduct</h4>
+                    </div>
+                    <div class="ms-auto widget-icon bg-success text-white">
+                        <i class="bi bi-basket3"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col">
+        <div class="card rounded-4">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="">
+                        <p class="mb-1">Son 3 Aydaki Sipariş Sayısı</p>
+                        <h4 class="mb-0">@ViewBag.OrderCount</h4>
+                    </div>
+                    <div class="ms-auto widget-icon bg-orange text-white">
+                        <i class="bi bi-calendar-check"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col">
+        <div class="card rounded-4">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="">
+                        <p class="mb-1">En Çok Alışveriş Yapan Müşteri</p>
+                        <h4 class="mb-0">@ViewBag.TopCustomer</h4>
+                    </div>
+                    <div class="ms-auto widget-icon bg-info text-white">
+                        <i class="bi bi-people"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div><!--end row-->
+
+<div class="row">
+    <div class="col-12 col-lg-8 col-xl-8 d-flex">
+        <div class="card w-100 rounded-4">
+            <div class="card-body">
+                <h5> En Popüler 10 Şehrin Sipariş Sayısı Dağılımı</h5>
+
+                <div style="width: 75%; margin: auto;">
+                    <canvas id="cityOrderChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-lg-4 col-xl-4 d-flex">
+        <div class="card w-100 rounded-4">
+            <div class="card-body">
+                <h5> Müşteri Segmentasyonu Dağılımı</h5>
+
+                <div style="width: 75%; margin: auto;">
+                    <canvas id="segmentationPieChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12 col-lg-12 col-xl-12 d-flex">
+        <div class="card w-100 rounded-4">
+            <div class="card-body">
+                <h5> Son Bir Gün içerisindeki Siparişler</h5>
+                <br />
+                <table class="table mb-0 table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Müşteri Adı</th>
+                            <th scope="col">Müşteri Soyadı</th>
+                            <th scope="col">Miktar</th>
+                            <th scope="col">Toplam Fiyat</th>
+                            <th scope="col">Ürün</th>
+                            <th scope="col">Tarih</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in ViewBag.Last10Orders)
+                        {
+                            count++;
+                            <tr>
+                                <th scope="row">@count</th>
+                                <td>@item.CustomerName</td>
+                                <td>@item.CustomerSurname</td>
+                                <td>@item.Amount</td>
+                                <td>@item.TotalPrice.ToString("0.00") ₺</td>
+                                <td>@item.ProductName</td>
+                                <td>@item.OrderDate.ToString("dd MMM yyyy")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-xl-12 mx-auto">        
+        <div class="card rounded-4 shadow-sm p-4 mt-3">
+            <h5 class="mb-3">Şehirlere Göre Sipariş Dağılımı</h5>
+            <div id="turkeyMap" style="height: 600px; width: 100%;"></div>
+            <div class="mt-3">
+                <small class="text-muted">
+                    <i class="bi bi-info-circle"></i> Haritada şehirlerin üzerine gelerek sipariş sayılarını, ortalama sipraiş tutarını ve en çok sipariş verilen kategoriyi görebilirsiniz.
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Leaflet CSS ve JS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-chart-geo@3"></script>
+
+
+@section Scripts {
+    <script>
+        // ViewBag'den gelen veriyi C#'tan JavaScript'e dönüştürme
+        var orderData = @Html.Raw(Json.Serialize(ViewBag.Order10CountByCity));
+
+        // Şehir isimlerini (Label'lar) ve Sipariş sayılarını (Data) ayırma
+        var cities = orderData.map(item => item.city);
+        var orderCounts = orderData.map(item => item.orderCount);
+
+        const ctx = document.getElementById('cityOrderChart').getContext('2d');
+
+        new Chart(ctx, {
+            type: 'bar', // Sütun grafiği tipi
+            data: {
+                labels: cities, // X ekseni (Şehir İsimleri)
+                datasets: [{
+                    label: 'Sipariş Sayısı',
+                    data: orderCounts, // Y ekseni (Sipariş Sayıları)
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.7)', // Kırmızı
+                        'rgba(54, 162, 235, 0.7)',  // Mavi
+                        'rgba(255, 206, 86, 0.7)',  // Sarı
+                        'rgba(75, 192, 192, 0.7)',  // Yeşil
+                        'rgba(153, 102, 255, 0.7)', // Mor
+                        'rgba(255, 159, 64, 0.7)'   // Turuncu
+                        // Daha fazla renk ekleyebilirsiniz
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Sipariş Sayısı'
+                        },
+                        ticks: {
+                            // Y eksenindeki sayıların tam sayı olmasını sağlar
+                            callback: function(value) {
+                                if (Number.isInteger(value)) {
+                                    return value;
+                                }
+                            }
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Şehir'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+
+    <script>
+        // ViewBag'den gelen veriyi C#'tan JavaScript'e dönüştürme
+        var segmentData = @Html.Raw(Json.Serialize(ViewBag.CustomerSegmentation));
+
+        // Her bir segment için doğru rengi döndüren fonksiyon
+        function getSegmentColor(segmentName) {
+            // Büyük/küçük harf duyarlılığını ortadan kaldırmak için toLowerCase() kullanın
+            const name = segmentName.toLowerCase().split(' ')[0]; // Sadece segment adını al
+
+            switch (name) {
+                case 'altın':
+                    return '#FFD700'; // Altın rengi
+                case 'gümüş':
+                    return '#C0C0C0'; // Gümüş rengi
+                case 'bronz':
+                    return '#CD7F32'; // Bronz rengi
+                default:
+                    return '#808080'; // Diğer/Tanımsız için gri
+            }
+        }
+
+        // Label'ları (Segment İsimleri) ve Data'yı (Müşteri Sayıları) ayırma
+        var segmentNames = segmentData.map(item => item.segmentName + ' (' + item.customerCount + ')');
+        var customerCounts = segmentData.map(item => item.customerCount);
+
+        // Yeni: Her bir veri noktası için doğru rengi atayan dinamik dizi oluşturma
+        var dynamicColors = segmentData.map(item => getSegmentColor(item.segmentName));
+
+
+        const ctxPie = document.getElementById('segmentationPieChart').getContext('2d');
+
+        new Chart(ctxPie, {
+            type: 'pie', // Pasta Grafiği tipi
+            data: {
+                labels: segmentNames, // Segment adı ve sayısını label olarak göster
+                datasets: [{
+                    label: 'Müşteri Sayısı',
+                    data: customerCounts,
+                    // Dinamik olarak oluşturulan renk dizisini kullan
+                    backgroundColor: dynamicColors,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Müşteri Segmentasyonu'
+                    }
+                }
+            }
+        });
+    </script>
+
+    <script>
+        
+        var cityOrderData = @Html.Raw(Json.Serialize(ViewBag.OrderStatsByCity));
+
+        function normalizeCityName(name) {
+            return name.toUpperCase()
+                .replace('İ', 'I')
+                .replace('Ş', 'S')
+                .replace('Ğ', 'G')
+                .replace('Ü', 'U')
+                .replace('Ö', 'O')
+                .replace('Ç', 'C');
+        }
+
+        var orderDataMap = {};
+        cityOrderData.forEach(item => {
+            var cityName = normalizeCityName(item.city);
+            orderDataMap[cityName] = {
+                OrderCount: item.orderCount,
+                AverageOrderAmount: item.averageOrderAmount,
+                TopCategory: item.topCategory
+            };
+        });
+
+        var minOrders = Math.min(...cityOrderData.map(x => x.orderCount));
+        var maxOrders = Math.max(...cityOrderData.map(x => x.orderCount));
+
+        var map = L.map('turkeyMap').setView([39.0, 35.0], 6);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors',
+            maxZoom: 18
+        }).addTo(map);
+
+        function getColor(orderCount) {
+            if (orderCount <= 1200) return '#ffffcc';   
+            if (orderCount <= 1235) return '#fee08b';   
+            if (orderCount <= 1391) return '#fc8d59';   
+            return '#d73027';
+        }
+
+        function style(feature) {
+            var cityName = normalizeCityName(feature.properties.name);
+            var orderCount = orderDataMap[cityName]?.OrderCount || 0;
+            return {
+                fillColor: getColor(orderCount),
+                weight: 2,
+                opacity: 1,
+                color: 'white',
+                fillOpacity: 0.7
+            };
+        }
+
+        function highlightFeature(e) {
+            var layer = e.target;
+            layer.setStyle({
+                weight: 3,
+                color: '#666',
+                fillOpacity: 0.9
+            });
+            layer.bringToFront();
+        }
+
+        function resetHighlight(e) {
+            geojson.resetStyle(e.target);
+        }
+
+        function onEachFeature(feature, layer) {
+            var cityName = feature.properties.name;
+            var normalizedName = normalizeCityName(cityName);
+            var cityData = orderDataMap[normalizedName] || { OrderCount: 0, AverageOrderAmount: 0, TopCategory: "Yok" };
+
+            layer.bindPopup(`
+                <div style="text-align: center;">
+                    <h6><strong>${cityName}</strong></h6>
+                    <p>Sipariş Sayısı: <strong>${cityData.OrderCount}</strong></p>
+                    <p>Ortalama Tutar: <strong>${cityData.AverageOrderAmount.toFixed(2)} ₺</strong></p>
+                    <p>En Çok Sipariş Verilen Kategori: <strong>${cityData.TopCategory}</strong></p>
+                </div>
+            `);
+
+            layer.bindTooltip(`${cityName}: ${cityData.OrderCount} sipariş`, { permanent: false, direction: 'top' });
+
+            layer.on({
+                mouseover: highlightFeature,
+                mouseout: resetHighlight
+            });
+        }
+
+        var geojson;
+
+        fetch('/snacked/ltr/assets/plugins/tr-cities-utf8.json')
+            .then(response => response.json())
+            .then(data => {
+                geojson = L.geoJSON(data, {
+                    style: style,
+                    onEachFeature: onEachFeature
+                }).addTo(map);
+                map.fitBounds(geojson.getBounds());
+            })
+            .catch(error => {
+                console.error('GeoJSON yüklenirken hata:', error);
+                document.getElementById('turkeyMap').innerHTML =
+                    '<div class="alert alert-danger">Harita yüklenirken bir hata oluştu.</div>';
+            });
+
+        // Legend ekle
+        var legend = L.control({position: 'bottomright'});
+
+        legend.onAdd = function (map) {
+            var div = L.DomUtil.create('div', 'info legend');
+            div.style.backgroundColor = 'white';
+            div.style.padding = '10px';
+            div.style.borderRadius = '5px';
+            div.style.boxShadow = '0 0 15px rgba(0,0,0,0.2)';
+
+            var grades = [
+                {min: 1127, max: 1200, color: '#ffffcc', label: '1127-1200'},
+                {min: 1201, max: 1235, color: '#fee08b', label: '1201-1235'},
+                {min: 1236, max: 1391, color: '#fc8d59', label: '1236-1391'},
+                {min: 1392, max: maxOrders, color: '#d73027', label: '1392+'}
+            ];
+
+            var labels = ['<strong>Sipariş Yoğunluğu</strong><br>'];
+            grades.forEach(g => {
+                labels.push(
+                    '<i style="background:' + g.color +
+                    '; width: 18px; height: 18px; display: inline-block; margin-right: 5px;"></i> ' +
+                    g.label
+                );
+            });
+
+            div.innerHTML = labels.join('<br>');
+            return div;
+        };
+
+        legend.addTo(map);
+    </script>
+}

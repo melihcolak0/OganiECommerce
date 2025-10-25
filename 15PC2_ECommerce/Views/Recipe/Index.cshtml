@@ -1,0 +1,117 @@
+﻿@model ResultRecipeDTO
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/_AdminLayout.cshtml";
+}
+
+<h5 class="mb-0 text-center" text-center>AI Destekli Tarif Sistemi</h5>
+<hr />
+<div class="row">
+    <div class="col-xl-6 mx-auto">
+        <div class="card">
+            <div class="card-body">
+                <div class="border p-3 rounded">
+                    <h6 class="mb-0 text-center">Yemekleri Keşfedin</h6>
+                    <hr />
+                    <form method="post" class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label">Malzemeler</label>
+                            <input type="text" class="form-control" asp-for="Prompt">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Yemekler ve Tarifleri</label>
+                            <div class="border rounded p-2" style="background-color: #f8f9fa; max-height: 500px; overflow-y:auto;">
+                                @Html.Raw(Model.Answer != null ? ConvertMarkdownToHtml(Model.Answer) : "")
+                            </div>
+                        </div>                        
+                        <div class="d-flex justify-content-between">
+                            <a href="/Category/Index" class="btn btn-secondary px-5 radius-30 btn-sm">
+                                <i class="bi bi-arrow-left"></i> Geri
+                            </a>
+                            <button type="submit" class="btn btn-success px-5 radius-30 btn-sm">
+                                <i class="bi bi-cup-straw"></i> Yemekleri Getir
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    public string ConvertMarkdownToHtml(string markdown)
+    {
+        if (string.IsNullOrEmpty(markdown)) return "";
+
+        string html = markdown;
+
+        // Başlıklar
+        html = System.Text.RegularExpressions.Regex.Replace(html, @"^## (.+)$", "<h3>$1</h3>", System.Text.RegularExpressions.RegexOptions.Multiline);
+        html = System.Text.RegularExpressions.Regex.Replace(html, @"^### (.+)$", "<h5>$1</h5>", System.Text.RegularExpressions.RegexOptions.Multiline);
+
+        // Kalın yazı
+        html = System.Text.RegularExpressions.Regex.Replace(html, @"\*\*(.+?)\*\*", "<b>$1</b>");
+
+        // Liste maddeleri
+        html = System.Text.RegularExpressions.Regex.Replace(html, @"^- (.+)$", "<li>$1</li>", System.Text.RegularExpressions.RegexOptions.Multiline);
+        html = System.Text.RegularExpressions.Regex.Replace(html, @"(<li>.+?</li>)", "<ul>$1</ul>", System.Text.RegularExpressions.RegexOptions.Singleline);
+
+        // Markdown tabloları
+        // | başlığı | başlığı | gibi satırlar varsa <table> yapalım
+        var lines = html.Split('\n');
+        var sb = new System.Text.StringBuilder();
+        bool inTable = false;
+
+        foreach (var line in lines)
+        {
+            if (line.Trim().StartsWith("|") && line.Trim().EndsWith("|"))
+            {
+                var cells = line.Trim().Trim('|').Split('|');
+                if (!inTable)
+                {
+                    sb.AppendLine("<table class='table table-bordered mb-2'>");
+                    inTable = true;
+                }
+
+                // Header veya normal row
+                if (cells.All(c => c.Trim().All(ch => ch == '-' || ch == ':')))
+                {
+                    // separator line, ignore
+                    continue;
+                }
+
+                if (sb.ToString().EndsWith("<table class='table table-bordered mb-2'>\n"))
+                {
+                    sb.Append("<thead><tr>");
+                    foreach (var cell in cells)
+                        sb.Append($"<th>{cell.Trim()}</th>");
+                    sb.AppendLine("</tr></thead><tbody>");
+                }
+                else
+                {
+                    sb.Append("<tr>");
+                    foreach (var cell in cells)
+                        sb.Append($"<td>{cell.Trim()}</td>");
+                    sb.AppendLine("</tr>");
+                }
+            }
+            else
+            {
+                if (inTable)
+                {
+                    sb.AppendLine("</tbody></table>");
+                    inTable = false;
+                }
+                sb.AppendLine(line + "<br>");
+            }
+        }
+
+        if (inTable) sb.AppendLine("</tbody></table>");
+
+        html = sb.ToString();
+
+        return html;
+    }
+}

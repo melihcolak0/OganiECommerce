@@ -1,0 +1,158 @@
+﻿@model List<ResultCustomerDTO>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/_AdminLayout.cshtml";
+	int count = 0;
+
+	int currentPage = ViewBag.CurrentPage;
+	int totalPages = ViewBag.TotalPages;
+	int pageSize = ViewBag.PageSize;
+	string searchQuery = ViewBag.SearchQuery ?? "";
+}
+
+<h5 class="mb-0">Müşteriler</h5>
+<hr />
+
+<div class="card">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <form method="get" asp-action="Index" class="d-flex align-items-center">
+                <label class="me-2 mb-0 fw-bold">Sayfa başına:</label>
+                <select name="pageSize" onchange="this.form.submit()" class="form-select w-auto">
+                    <option value="5" selected="@(pageSize == 5)">5</option>
+                    <option value="10" selected="@(pageSize == 10)">10</option>
+                    <option value="20" selected="@(pageSize == 20)">20</option>
+                </select>
+                <input type="hidden" name="searchQuery" value="@searchQuery" />
+            </form>
+
+            <form method="get" asp-action="Index" class="d-flex">
+                <input type="text" name="searchQuery" value="@searchQuery" class="form-control me-2" style="width: 180px;" placeholder="Müşteri ara..." />
+                <button type="submit" class="btn btn-outline-primary">
+                    <i class="bi bi-search"></i> Ara
+                </button>
+            </form>
+        </div>
+        <hr />
+
+        <table class="table mb-0 table-striped">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Adı</th>
+                    <th>Soyadı</th>
+                    <th>Telefon</th>
+                    <th>E-Mail</th>
+                    <th>Şehir</th>
+                    <th>Sil</th>
+                    <th>Güncelle</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    count++;
+                    <tr>
+                        <th scope="row">@count</th>
+                        <td>@item.Name</td>
+                        <td>@item.Surname</td>
+                        <td>@item.Phone</td>
+                        <td>@item.Email</td>
+                        <td>@item.City</td>
+                        <td><a href="/Customer/DeleteCustomer/@item.CustomerId" class="btn btn-danger radius-30 btn-sm"><i class="bi bi-trash"></i> Sil</a></td>
+                        <td><a href="/Customer/UpdateCustomer/@item.CustomerId" class="btn btn-warning radius-30 btn-sm"><i class="bi bi-pencil-square"></i> Güncelle</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <div class="mt-3">
+            <div class="text-muted small mb-2">
+                Toplam <strong>@totalPages</strong> sayfa, şu anda <strong>@currentPage</strong>. sayfadasınız.
+            </div>
+
+            <div class="d-flex justify-content-center">
+                <nav>
+                    <ul class="pagination mb-0">
+                        @if (currentPage > 1)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="@Url.Action("Index", new { page = currentPage - 1, searchQuery, pageSize })">«</a>
+                            </li>
+                        }
+
+                        @{
+                            int startPage = Math.Max(1, currentPage - 2);
+                            int endPage = Math.Min(totalPages, startPage + 4);
+                            if (endPage - startPage < 4)
+                                startPage = Math.Max(1, endPage - 4);
+                        }
+
+                        @for (int i = startPage; i <= endPage; i++)
+                        {
+                            <li class="page-item @(i == currentPage ? "active" : "")">
+                                <a class="page-link"
+                                   href="@Url.Action("Index", new { page = i, searchQuery, pageSize })">@i</a>
+                            </li>
+                        }
+
+                        @if (currentPage < totalPages)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="@Url.Action("Index", new { page = currentPage + 1, searchQuery, pageSize })">»</a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            </div>
+        </div>
+
+        <div class="mt-3">
+            <a href="/Customer/CreateCustomer" class="btn btn-info px-5 radius-30 btn-sm">
+                <i class="bi bi-plus-circle"></i> Yeni Müşteri Ekle
+            </a>
+        </div>
+    </div>
+</div>
+
+@* <h5 class="mb-0">Müşteriler</h5>
+<hr />
+<div class="card">
+	<div class="card-body">
+		<table class="table mb-0 table-striped">
+			<thead>
+				<tr>
+					<th scope="col">#</th>
+					<th scope="col">Adı</th>
+					<th scope="col">Soyadı</th>
+					<th scope="col">Telefon</th>
+					<th scope="col">E-Mail</th>
+					<th scope="col">Şehir</th>
+					<th scope="col">Sil</th>
+					<th scope="col">Güncelle</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var item in Model)
+				{
+					count++;
+					<tr>
+						<th scope="row">@count</th>
+						<td>@item.Name</td>
+						<td>@item.Surname</td>
+						<td>@item.Phone</td>
+						<td>@item.Email</td>
+						<td>@item.City</td>
+						<td><a href="/Customer/DeleteCustomer/@item.CustomerId" class="btn btn-danger radius-30 btn-sm"><i class="bi bi-trash"></i> Sil</a></td>
+						<td><a href="/Customer/UpdateCustomer/@item.CustomerId" class="btn btn-warning radius-30 btn-sm"><i class="bi bi-pencil-square"></i> Güncelle</a></td>
+					</tr>
+				}
+			</tbody>
+		</table>
+		<br />
+		<a href="/Customer/CreateCustomer" class="btn btn-info px-5 radius-30 btn-sm">
+			<i class="bi bi-plus-circle"></i> Yeni Müşteri Ekle
+		</a>
+	</div>
+</div> *@

@@ -1,0 +1,215 @@
+﻿@model List<CityForecastResult>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/_AdminLayout.cshtml";
+}
+<h5>2025 Gerçek Siparişler ve 2026 Tahminleri</h5>
+<hr />
+<div class="card">
+    <div class="card-body">        
+        <table class="table mb-0 table-striped text-center">
+            <thead class="table">
+                <tr>
+                    <th rowspan="2" class="align-middle">Şehir</th>
+                    <th colspan="12">2025 Gerçek Sipariş Sayıları</th>
+                    <th colspan="3">2026 Tahminleri</th>
+                </tr>
+                <tr>
+                    <th>Oca</th>
+                    <th>Şub</th>
+                    <th>Mar</th>
+                    <th>Nis</th>
+                    <th>May</th>
+                    <th>Haz</th>
+                    <th>Tem</th>
+                    <th>Ağu</th>
+                    <th>Eyl</th>
+                    <th>Eki</th>
+                    <th>Kas</th>
+                    <th>Ara</th>
+                    <th>Oca</th>
+                    <th>Şub</th>
+                    <th>Mar</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var city in Model)
+                {
+                    <tr>
+                        <td>@city.City</td>
+
+                        @foreach (var order in city.HistoricalOrders)
+                        {
+                            <td>@Math.Round(order)</td>
+                        }
+
+                        @foreach (var forecast in city.ForecastedOrders)
+                        {
+                            <td class="fw-bold text-success">@forecast.ToString("F2")</td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="card rounded-4 shadow-sm p-3">
+    <h5 class="mb-3">Şehir Bazlı Siparişler (2025 Gerçek & 2026 Tahmin)</h5>
+
+    <div style="position: relative; height: 500px; width: 100%;">
+        <canvas id="forecastChart"></canvas>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    // Türkçe karakter düzeltme fonksiyonu
+    function fixTurkishChars(str) {
+        const map = {
+            'Ä°': 'İ',
+            'Ä±': 'ı',
+            'Åž': 'ş',
+            'Å': 'Ş',
+            'Ã§': 'ç',
+            'Ã': 'Ç',
+            'ÄŸ': 'ğ',
+            'Ä': 'Ğ',
+            'Ã¼': 'ü',
+            'Ã': 'Ü',
+            'Ã¶': 'ö',
+            'Ã': 'Ö'
+        };
+        let result = str;
+        for (let [wrong, correct] of Object.entries(map)) {
+            result = result.replace(new RegExp(wrong, 'g'), correct);
+        }
+        return result;
+    }
+
+    function toTitleCaseTr(str) {
+        if (!str) return str;
+        str = fixTurkishChars(str);
+        const lower = str.toLocaleLowerCase('tr-TR');
+        return lower.charAt(0).toLocaleUpperCase('tr-TR') + lower.slice(1);
+    }
+
+    const labels = [
+        "Ock", "Şub", "Mar", "Nis", "May", "Haz", "Tem", "Ağu", "Eyl", "Eki", "Kas", "Ara",
+        "Tahmin 1 (Ock)", "Tahmin 2 (Şub)", "Tahmin 3 (Mar)"
+    ];
+
+    const datasets = [];
+    const rawValues = [];
+
+    const cityMapping = {
+        'istanbul': 'İstanbul',
+        'izmir': 'İzmir',
+        'ankara': 'Ankara',
+        'eskisehir': 'Eskişehir',
+        'eskişehir': 'Eskişehir',
+        'bursa': 'Bursa',
+        'trabzon': 'Trabzon',
+        'konya': 'Konya',
+        'mardin': 'Mardin',
+        'antalya': 'Antalya',
+        'erzurum': 'Erzurum'
+    };
+
+    @foreach (var city in Model)
+    {
+                    var hist = city.HistoricalOrders.Select(x => Math.Round(x, 2)).ToList();
+                    var fc = city.ForecastedOrders.Select(x => Math.Round(x, 2)).ToList();
+
+                    <text>
+                    (function() {
+                        const cityNameRaw = '@Html.Raw(city.City)';
+                        const fixedCity = fixTurkishChars(cityNameRaw);
+                        const normalizedCity = fixedCity.toLocaleLowerCase('tr-TR')
+                            .replace(/i̇/g, 'i')
+                            .replace(/ı/g, 'i');
+                        const cityName = cityMapping[normalizedCity] || toTitleCaseTr(fixedCity);
+
+                        const histData = @Html.Raw(Json.Serialize(hist));
+                        histData.push(null, null, null); // Tahminler için boş alan
+                        const fcData = new Array(12).fill(null).concat(@Html.Raw(Json.Serialize(fc)));
+
+                        // 2 ondalık basamak için JS tarafında garanti
+                        const histDataRounded = histData.map(v => v !== null ? +v.toFixed(2) : null);
+                        const fcDataRounded = fcData.map(v => v !== null ? +v.toFixed(2) : null);
+
+                        rawValues.push(...histData.filter(v => v !== null), ...fcData.filter(v => v !== null));
+
+                        const color = `hsl(${Math.random() * 360}, 70%, 50%)`;
+
+                        datasets.push({
+                            label: cityName + ' (Gerçek)',
+                            data: histDataRounded,
+                            borderColor: color,
+                            backgroundColor: color,
+                            fill: false,
+                            tension: 0.3
+                        });
+
+                        datasets.push({
+                            label: cityName + ' (Tahmin)',
+                            data: fcDataRounded,
+                            borderColor: color,
+                            backgroundColor: color,
+                            fill: false,
+                            borderWidth: 2,
+                            borderDash: [6, 4],
+                            tension: 0.3
+                        });
+                    })();
+                    </text>
+    }
+
+    const numericValues = rawValues.map(Number);
+    const maxVal = numericValues.length ? Math.max(...numericValues) : 0;
+    const yMax = Math.ceil(maxVal * 1.15);
+
+    const ctx = document.getElementById('forecastChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: datasets
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'nearest', axis: 'x', intersect: false },
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: { boxWidth: 12 }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const v = context.raw;
+                            return v !== null && v !== undefined
+                                ? context.dataset.label + ': ' + v.toFixed(2)
+                                : '';
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    min: 70,
+                    max: yMax,
+                    ticks: { stepSize: 10 },
+                    title: { display: true, text: 'Sipariş Sayısı' }
+                },
+                x: { title: { display: true, text: 'Ay' } }
+            },
+            elements: {
+                point: { radius: 3, hoverRadius: 5 }
+            }
+        }
+    });
+</script>

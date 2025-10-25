@@ -1,0 +1,55 @@
+﻿@model CreateOrderDTO
+
+@{
+    ViewData["Title"] = "CreateOrder";
+    Layout = "~/Views/_AdminLayout.cshtml";
+}
+
+<h5 class="mb-0 text-center">Siparişler</h5>
+<hr />
+<div class="row">
+    <div class="col-xl-6 mx-auto">
+        <div class="card">
+            <div class="card-body">
+                <div class="border p-3 rounded">
+                    <h6 class="mb-0 text-center">Yeni Sipariş Ekle</h6>
+                    <hr />
+                    <form method="post" class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label">Müşteri</label>
+                            <select class="form-select" asp-for="CustomerId" asp-items="@ViewBag.Customers">
+                                <option value="">-- Müşteri Seçin --</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Ürün</label>
+                            <select class="form-select" asp-for="ProductId" asp-items="@ViewBag.Products">
+                                <option value="">-- Ürün Seçin --</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Miktar</label>
+                            <input type="text" class="form-control" asp-for="Amount">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Toplam Fiyat</label>
+                            <input type="text" class="form-control" asp-for="TotalPrice">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Tarih</label>
+                            <input type="datetime-local" class="form-control" asp-for="OrderDate">
+                        </div>                       
+                        <div class="d-flex justify-content-between">
+                            <a href="/Order/Index" class="btn btn-secondary px-5 radius-30 btn-sm">
+                                <i class="bi bi-arrow-left"></i> Geri
+                            </a>
+                            <button type="submit" class="btn btn-success px-5 radius-30 btn-sm">
+                                <i class="bi bi-plus-circle"></i> Ekle
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

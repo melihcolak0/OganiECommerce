@@ -1,0 +1,11 @@
+﻿@model List<ResultCategoryDTO>
+
+<div class="sidebar__item">
+    <h4>Kategoriler</h4>
+    <ul>
+        @foreach(var item in Model)
+        {
+            <li><a href="#">@item.CategoryName</a></li>
+        }
+    </ul>
+</div>
