@@ -22,8 +22,8 @@ Veri tabanı olarak tamamen ücretsiz olan PostgreSQL üzerinde ilişkisel tablo
 - 📈 **Sipariş Tahmin Analizi:** ML.NET kullanılarak 2025 verilerine göre 2026’nın ilk 3 ayına ait şehir bazlı sipariş tahmini yapılmakta.
 - 🥇 **Müşteri Segmentasyonu:**<br>
 Altın Müşteriler: 210+ sipariş<br>
-Gümüş nÜŞTERİLECustomers: 180-209 sipariş<br>
-Bronze Customers: 179 dan daha az sipariş<br>
+Gümüş Müşteriler: 180-209 sipariş<br>
+Bronz Müşteriler: 179 dan daha az sipariş<br>
 Bu segment dağılımı dashboard üzerinde pie chart olarak gösterilmektedir.
 - 🗺️ **Harita Entegrasyonu:** Leaflet kullanılarak Türkiye haritası üzerinde şehir bazlı sipariş yoğunluğu heatmap olarak gösterilmektedir.
 Şehir seçildiğinde toplam sipariş sayısı, ortalama sipariş tutarı ve en çok tercih edilen kategori bilgileri görüntülenir.
