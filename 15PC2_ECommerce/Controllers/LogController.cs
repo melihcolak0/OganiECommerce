@@ -13,7 +13,7 @@ namespace _15PC2_ECommerce.Controllers
             _logService = logService;
         }
 
-        public async Task<IActionResult> Index(string searchQuery, int page = 1, int pageSize = 5)
+        public async Task<IActionResult> Index(string searchQuery, int page = 1, int pageSize = 10)
         {
             var logs = await _logService.GetAllLogsAsync();
 

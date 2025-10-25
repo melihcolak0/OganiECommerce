@@ -19,7 +19,7 @@ namespace _15PC2_ECommerce.Controllers
         }
 
         // Listeleme
-        public async Task<IActionResult> Index(string searchQuery, int page = 1, int pageSize = 5)
+        public async Task<IActionResult> Index(string searchQuery, int page = 1, int pageSize = 10)
         {
             // 1️ Tüm kategorileri getir
             var categories = await _categoryService.GetAllCategoriesAsync();
