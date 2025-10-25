@@ -1,4 +1,4 @@
-# 🚀 ASP.NET Core 9.0 ve PostgreSQL ile Ogani E-Ticaret Sitesi
+# 🛒 ASP.NET Core 9.0 ve PostgreSQL ile Ogani E-Ticaret Sitesi
 Bu repository, M&Y Yazılım Akademi bünyesinde yaptığım on altıncı proje olan ASP.NET Core 9.0 ve PostgreSQL ile Ogani E-Ticaret Sitesi projesini içermektedir. Bu eğitimde bana yol gösteren Murat Yücedağ'a çok teşekkür ederim.
 
 Bu proje, ASP.NET Core 9.0 ve PostgreSQL kullanılarak geliştirilmiş, temel e-ticaret işlevlerini barındıran modern bir web uygulamasıdır. Proje tek katmanlı bir yapıda, folder structure prensiplerine uygun olarak tasarlanmış ve gereksiz sınıflar kullanılmadan sade, okunabilir bir mimari anlayışıyla geliştirilmiştir. Geliştirme sürecinde performans, sürdürülebilirlik ve kod okunabilirliği ön planda tutulmuştur.
@@ -9,30 +9,28 @@ Veri tabanı olarak tamamen ücretsiz olan PostgreSQL üzerinde ilişkisel tablo
 
 ---
 
-## 🌟 Proje Özellikleri
-
-### 🍞 Ürün Yönetimi
-
-- Ürünler kategori ve fiyat aralıklarına göre dinamik olarak filtrelenebilir.
-- Ürünler, veritabanından çekilerek responsive kart yapısında listelenir.
-
-### 🤖 ML.NET Satış Tahmini
-- ML.NET kullanılarak geçmiş satış verileri analiz edilir.
-- Her ürün için tahmini satış miktarı grafiksel olarak gösterilir.
-- Bu sayede yöneticiler gelecek üretim planlamasını daha doğru yapabilir.
-
-### 💬 SignalR Chatbot
-- Admin tarafında sorunları daha hızlı giderebilmek amacıyla SignalR tabanlı gerçek zamanlı chatbot entegre edilmiştir.
-- Adminler chatbot ile doğal dilde etkileşime geçebilir.
-- RapidAPI - ChatGPT entegrasyonu sayesinde akıllı yanıtlar sağlanır.
-
-### 📊 Tahminleme ve KPI Kartları
-- Tahminleme raporlamasında, toplam ürün sayısı, en çok satılan ürün, tahmini yıllık satış ve ortalama aylık satış gibi metrikler KPI kartları ile gösterilir.
-- Satış tahminleri Column Chart ve Line Chart grafiklerle sunulur.
-
-### 📈 Filtreleme ve Dinamik Görselleştirme
-- Ürünler kategori, fiyat veya ad filtrelerine göre gerçek zamanlı olarak güncellenir.
-- ViewComponent yapısı sayesinde bölümler bağımsız ve yeniden kullanılabilir hale getirilmiştir.
+### ⚙️ Proje Özellikleri
+- 🧩 Veritabanı Yapısı: Category, Product, Customer ve Order tabloları PostgreSQL üzerinde yapılandırıldı.
+- 🐘 PostgreSQL Entegrasyonu: Tüm veriler PostgreSQL üzerinde saklanmakta, güvenli CRUD işlemleri yapılmaktadır.
+🍎 Ürün Verisi (Product Case): ChatGPT yardımıyla oluşturulan 250 adet yiyecek ürünü (meyve, sebze, içecek, tatlı, tuzlu vb.) veritabanına insert sorgusu olarak eklendi.
+👤 Müşteri Verisi (Customer Case): ChatGPT kullanılarak hazırlanan 500 adet Türkçe müşteri verisi PostgreSQL’e aktarıldı.
+📦 Sipariş Verisi (Order Case): 100.000 adet sipariş verisi CSV dosyası olarak hazırlanıp sisteme yüklendi.
+🧠 Admin Paneli (Admin Case): CRUD işlemlerinin yapılabildiği modern bir yönetim paneli oluşturuldu.
+📊 Dashboard & Analitik: Admin panelinde widget’lar, istatistik kartları, tablo ve grafikler içeren bir dashboard yer almakta.
+🍳 Yemek Öneri Özelliği (AI Integration): Kullanıcı elindeki malzemeleri girerek Google Gemini üzerinden yapay zekâ destekli yemek önerileri alabiliyor.
+🚫 Sepet Özelliği: Projede alışveriş sepeti bulunmamaktadır; sistem sadece veri analizi ve yönetim odaklı tasarlanmıştır.
+💬 WhatsApp Entegrasyonu: Sağ üstteki telefon ikonuna tıklandığında WhatsApp Web üzerinden iletişim başlatılabiliyor.
+📈 Sipariş Tahmin Analizi (ML.NET Case): ML.NET kullanılarak 2025 verilerine göre 2026’nın ilk 3 ayına ait şehir bazlı sipariş tahmini yapılmakta.
+🥇 Müşteri Segmentasyonu:
+Gold Customers: Ayda 5+ sipariş
+Silver Customers: Ayda 2–4 sipariş
+Bronze Customers: Ayda 1 veya daha az sipariş
+Bu segment dağılımı dashboard üzerinde pie chart olarak gösterilmektedir.
+🗺️ Harita Entegrasyonu (Map Case): Leaflet / Chart.js Map kullanılarak Türkiye haritası üzerinde şehir bazlı sipariş yoğunluğu heatmap olarak gösterilmektedir.
+Şehir seçildiğinde toplam sipariş sayısı, ortalama sipariş tutarı ve en çok tercih edilen kategori bilgileri görüntülenir.
+🧾 Loglama Sistemi: Admin panelindeki her CRUD işlemi (ekleme, silme, güncelleme) Log tablosuna kaydedilir.
+Log tablosunda şu sütunlar bulunur: LogId, UserName, ActionType, Entity, Date.
+Son işlemler dashboard’da “Son Aktiviteler” bölümünde listelenir.
 
 ---
 
